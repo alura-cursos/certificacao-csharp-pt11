@@ -4,68 +4,68 @@ using System.Threading.Tasks;
 
 namespace Program05._03
 {
+    // Este exemplo constrói uma Pilha Concorrente (ConcurrentStack).
     class Program
     {
         static async Task Main()
         {
-            int items = 10000;
+            int itens = 10000;
+            ConcurrentStack<int> pilha = new ConcurrentStack<int>();
 
-            ConcurrentStack<int> stack = new ConcurrentStack<int>();
-
-            // Create an action to push items onto the stack
-            Action pusher = () =>
+            // Cria uma ação para empilhar itens
+            Action empilhador = () =>
             {
-                for (int i = 0; i < items; i++)
+                for (int i = 0; i < itens; i++)
                 {
-                    stack.Push(i);
+                    pilha.Push(i);
                 }
             };
 
-            // Run the action once
-            pusher();
+            // Executa a pilha uma vez
+            empilhador();
 
-            if (stack.TryPeek(out int result))
+            if (pilha.TryPeek(out int result))
             {
-                Console.WriteLine($"TryPeek() saw {result} on top of the stack.");
+                Console.WriteLine($"TryPeek() retornou {result} no topo da filha.");
             }
             else
             {
-                Console.WriteLine("Could not peek most recently added number.");
+                Console.WriteLine("Não foi possível obter o item adicionado por último.");
             }
 
-            // Empty the stack
-            stack.Clear();
+            // Esvazia a pilha
+            pilha.Clear();
 
-            if (stack.IsEmpty)
+            if (pilha.IsEmpty)
             {
-                Console.WriteLine("Cleared the stack.");
+                Console.WriteLine("A pilha foi esvaziada.");
             }
 
-            // Create an action to push and pop items
-            Action pushAndPop = () =>
+            // Cria uma ação para empilhar e desempilhar itens
+            Action adiona_e_remove = () =>
             {
-                Console.WriteLine($"Task started on {Task.CurrentId}");
+                Console.WriteLine($"Tarefa começou no item: {Task.CurrentId}");
 
                 int item;
-                for (int i = 0; i < items; i++)
-                    stack.Push(i);
-                for (int i = 0; i < items; i++)
-                    stack.TryPop(out item);
+                for (int i = 0; i < itens; i++)
+                    pilha.Push(i);
+                for (int i = 0; i < itens; i++)
+                    pilha.TryPop(out item);
 
-                Console.WriteLine($"Task ended on {Task.CurrentId}");
+                Console.WriteLine($"Tarefa terminou no item: {Task.CurrentId}");
             };
 
-            // Spin up five concurrent tasks of the action
-            var tasks = new Task[5];
-            for (int i = 0; i < tasks.Length; i++)
-                tasks[i] = Task.Factory.StartNew(pushAndPop);
+            // escala 4 tarefas simultâneas da action
+            var tarefas = new Task[5];
+            for (int i = 0; i < tarefas.Length; i++)
+                tarefas[i] = Task.Factory.StartNew(adiona_e_remove);
 
-            // Wait for all the tasks to finish up
-            await Task.WhenAll(tasks);
+            // Aguarda o término de todas as tarefas
+            await Task.WhenAll(tarefas);
 
-            if (!stack.IsEmpty)
+            if (!pilha.IsEmpty)
             {
-                Console.WriteLine("Did not take all the items off the stack");
+                Console.WriteLine("Não removeu todos os itens da pilha.");
             }
 
             Console.ReadLine();

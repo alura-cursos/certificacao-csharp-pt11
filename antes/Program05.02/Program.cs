@@ -1,48 +1,51 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Program05._02
 {
+    // Este exemplo constrói uma Fila Concorrente (ConcurrentQueue).
     class Program
     {
         static void Main()
         {
-            // Construct a ConcurrentQueue.
-            ConcurrentQueue<int> cq = new ConcurrentQueue<int>();
+            ConcurrentQueue<int> fila = new ConcurrentQueue<int>();
 
-            // Populate the queue.
-            for (int i = 0; i < 10000; i++)
+            // Popula a fila.
+            for (int i = 0; i < 30000; i++)
             {
-                cq.Enqueue(i);
+                //Enfileira um valor
+                fila.Enqueue(i);
             }
 
-            // Peek at the first element.
-            int result;
-            if (!cq.TryPeek(out result))
+            // TryPeek: tenta consultar o primeiro elemento.
+            int resultado;
+            if (!fila.TryPeek(out resultado))
             {
-                Console.WriteLine("CQ: TryPeek failed when it should have succeeded");
+                Console.WriteLine("CQ: TryPeek falhou!");
             }
-            else if (result != 0)
+            else if (resultado != 0)
             {
-                Console.WriteLine("CQ: Expected TryPeek result of 0, got {0}", result);
+                Console.WriteLine("CQ: TryPeek deveria retornar 0, mas retornou {0}", resultado);
             }
 
-            int outerSum = 0;
-            // An action to consume the ConcurrentQueue.
+            int somaGeral = 0;
+            // Uma ação para ler a ConcurrentQueue.
             Action action = () =>
             {
-                int localSum = 0;
-                int localValue;
-                while (cq.TryDequeue(out localValue)) localSum += localValue;
-                Interlocked.Add(ref outerSum, localSum);
+                int somaLocal = 0;
+                int valorLocal;
+                while (fila.TryDequeue(out valorLocal)) somaLocal += valorLocal;
+                Interlocked.Add(ref somaGeral, somaLocal);
             };
 
-            // Start 4 concurrent consuming actions.
+            // Inicia 4 actions simultâneas.
             Parallel.Invoke(action, action, action, action);
 
-            Console.WriteLine("outerSum = {0}, should be 49995000", outerSum);
+            Console.WriteLine("somaGeral:\t{0}" +
+                "\ndeveria ser:\t449985000", somaGeral);
             Console.ReadLine();
 
         }
