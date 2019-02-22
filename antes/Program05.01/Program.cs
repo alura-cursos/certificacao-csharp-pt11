@@ -13,8 +13,8 @@ namespace Program05_01
         {
             int NUMERO_ITENS = 30;
 
-            ConcurrentDictionary<int, int> dicionario =
-                new ConcurrentDictionary<int, int>();
+            Dictionary<int, int> dicionario =
+                new Dictionary<int, int>();
 
             Console.WriteLine("Inicializando dicionário...");
             for (int i = 0; i < NUMERO_ITENS; i++)
@@ -29,33 +29,16 @@ namespace Program05_01
             {
                 for (int i = 0; i < NUMERO_ITENS; i++)
                 {
-                    int valor;
-                    do
-                    {
-                        valor = dicionario[i];
-                    } while (!dicionario.TryUpdate(i, valor + 1, valor));
+                    dicionario[i]++;
                     Thread.Sleep(i);
                 }
             });
             thread1.Start();
 
-            Thread thread2 = new Thread(() =>
-            {
-                for (int i = 0; i < NUMERO_ITENS; i++)
-                {
-                    int valor;
-                    do
-                    {
-                        valor = dicionario[i];
-                    } while (!dicionario.TryUpdate(i, valor + 1, valor));
-                    Thread.Sleep(i);
-                }
-            });
-            thread2.Start();
+
 
 
             thread1.Join();
-            thread2.Join();
 
             ImprimirItens(dicionario);
 

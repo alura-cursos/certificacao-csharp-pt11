@@ -27,7 +27,7 @@ namespace Program04
             }
         }
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             //TAREFA 1: Executar o código
             //TAREFA 2: Testar com nome de arquivo inexistente
@@ -36,7 +36,7 @@ namespace Program04
 
             try
             {
-                await Executar("filmes123.json");
+                Executar("filmes.json");
             }
             catch (Exception exc)
             {
@@ -46,17 +46,17 @@ namespace Program04
             Console.ReadLine();
         }
 
-        private static async Task Executar(string nomeArquivo)
+        private static void Executar(string nomeArquivo)
         {
-            string json = await LerArquivoJson(nomeArquivo);
+            string json = LerArquivoJson(nomeArquivo);
             IEnumerable<Filme> filmes =
                 JsonConvert.DeserializeObject<IEnumerable<Filme>>(json);
             GeraRelatorio(filmes);
         }
 
-        private static async Task<string> LerArquivoJson(string nomeArquivo)
+        private static string LerArquivoJson(string nomeArquivo)
         {
-            return await File.ReadAllTextAsync(nomeArquivo);
+            return File.ReadAllText(nomeArquivo);
         }
 
         private static void GeraRelatorio(IEnumerable<Filme> filmes)

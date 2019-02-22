@@ -10,46 +10,22 @@ namespace Program07._02
         static void Main(string[] args)
         {
             Console.WriteLine("Tecle algo para parar o relógio");
-            CancellationTokenSource cancellationTokenSource
-                = new CancellationTokenSource();
-
-            Task contagem = new Task(() 
-                => ContagemRegressiva(cancellationTokenSource.Token));
+            Task contagem = new Task(() => ContagemRegressiva());
             contagem.Start();
             Console.ReadKey();
-            
-            if (contagem.IsCompleted)
-            {
-                Console.WriteLine("A contagem foi completada.");
-            }
-            else
-            {
-                try
-                {
-                    cancellationTokenSource.Cancel();
-                    contagem.Wait();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("A contagem foi interrompida: {0}", ex.InnerException.Message);
-                }
-                
-            }
+            Console.WriteLine("A contagem foi completada.");
             Console.ReadLine();
         }
 
-        static void ContagemRegressiva(CancellationToken 
-            cancellationToken)
+        static void ContagemRegressiva()
         {
             int contador = 7;
-            while (contador > 0 && 
-                !cancellationToken.IsCancellationRequested)
+            while (contador > 0)
             {
                 Console.WriteLine("contador: {0}", contador);
                 Thread.Sleep(500);
                 contador--;
             }
-            cancellationToken.ThrowIfCancellationRequested();
         }
 
     }
