@@ -11,19 +11,6 @@ namespace Program01._05
     {
         static void Main(string[] args)
         {
-            Task tarefa1 = new Task(() => ExecutaTrabalho(1));
-            tarefa1.Start();
-            tarefa1.Wait();
-
-            Task tarefa2 = Task.Run(() => ExecutaTrabalho(2));
-            tarefa2.Wait();
-
-            Task<int> tarefa3 = Task.Run(() =>
-            {
-                return CalcularResultado(2, 3);
-            });
-
-            Console.WriteLine("O resultado é: {0}", tarefa3.Result);
 
             Console.WriteLine("Término do processamento. Tecle [ENTER] para terminar.");
             Console.ReadLine();
